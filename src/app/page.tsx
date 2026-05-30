@@ -955,29 +955,16 @@ export default function Home() {
       )}
 
       {/* 8. BOTTOM FLOATING NAVIGATION ISLAND (UX PREMIUM PWA) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-4 py-3 flex items-center justify-between max-w-md w-[92%] shadow-2xl gap-1">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-6 py-3 flex items-center justify-between max-w-sm w-[90%] shadow-2xl gap-2">
         <Link 
           href="/" 
           className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
-            !isAddDrawerOpen && !showScanner ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
+            !isAddDrawerOpen ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
           }`}
         >
           <Layers className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Mon Stock</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Mon Stock</span>
         </Link>
-
-        <button 
-          onClick={() => {
-            setIsAddDrawerOpen(true);
-            setShowScanner(true);
-          }}
-          className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
-            isAddDrawerOpen && showScanner ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
-          }`}
-        >
-          <Camera className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Scanner</span>
-        </button>
 
         <button 
           onClick={() => {
@@ -985,11 +972,11 @@ export default function Home() {
             setShowScanner(false);
           }}
           className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
-            isAddDrawerOpen && !showScanner ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
+            isAddDrawerOpen ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
           }`}
         >
           <Plus className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Ajouter</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Ajouter</span>
         </button>
 
         <Link 
@@ -997,7 +984,7 @@ export default function Home() {
           className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
           <ShoppingBag className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Courses</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Courses</span>
         </Link>
 
         <button 
@@ -1007,7 +994,7 @@ export default function Home() {
           className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
           <Sparkles className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Recettes</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Recettes</span>
         </button>
       </nav>
 

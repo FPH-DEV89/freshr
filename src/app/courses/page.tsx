@@ -242,21 +242,13 @@ export default function CoursesPage() {
       </main>
 
       {/* 5. BOTTOM FLOATING NAVIGATION ISLAND (UX PREMIUM PWA) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-4 py-3 flex items-center justify-between max-w-md w-[92%] shadow-2xl gap-1">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-6 py-3 flex items-center justify-between max-w-sm w-[90%] shadow-2xl gap-2">
         <Link 
           href="/" 
           className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
           <Layers className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Mon Stock</span>
-        </Link>
-
-        <Link 
-          href="/?scan=true"
-          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
-        >
-          <Camera className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Scanner</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Mon Stock</span>
         </Link>
 
         <Link 
@@ -264,7 +256,7 @@ export default function CoursesPage() {
           className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
           <Plus className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Ajouter</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Ajouter</span>
         </Link>
 
         <Link 
@@ -272,7 +264,7 @@ export default function CoursesPage() {
           className="flex flex-col items-center gap-1.5 text-[var(--accent-primary)] hover:scale-105 transition-all flex-1"
         >
           <ShoppingBag className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Courses</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Courses</span>
         </Link>
 
         <Link 
@@ -280,7 +272,7 @@ export default function CoursesPage() {
           className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
           <Sparkles className="h-4.5 w-4.5" />
-          <span className="text-[7px] font-extrabold tracking-widest uppercase">Recettes</span>
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Recettes</span>
         </Link>
       </nav>
 
