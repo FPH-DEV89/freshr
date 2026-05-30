@@ -12,7 +12,9 @@ import {
   Trash, 
   Loader2, 
   ShoppingCart,
-  AlertCircle
+  AlertCircle,
+  Camera,
+  Sparkles
 } from "lucide-react";
 import Link from "next/link";
 
@@ -101,36 +103,22 @@ export default function CoursesPage() {
           <h2 className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider font-display border-b border-[var(--card-border)] pb-3 flex items-center gap-2">
             <ShoppingCart className="h-4 w-4 text-[var(--accent-primary)]" /> Ajouter à ma liste
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="flex gap-4">
             <input
               type="text"
               placeholder="EX: 6 ŒUFS, CRÈME FRAÎCHE..."
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
-              className="w-full h-11 px-0 glass-input text-xs font-semibold uppercase tracking-wider"
+              className="flex-1 h-11 px-0 glass-input text-xs font-semibold uppercase tracking-wider"
               required
             />
-            
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <div className="flex-1">
-                <select
-                  value={newItemLocation}
-                  onChange={(e) => setNewItemLocation(e.target.value as any)}
-                  className="w-full h-11 px-0 glass-input text-xs font-semibold uppercase tracking-wider"
-                >
-                  <option value="FRIGO_1" className="bg-white">Rangement : Frigo 1 🔵</option>
-                  <option value="FRIGO_2" className="bg-white">Rangement : Frigo 2 🟣</option>
-                  <option value="PLACARD" className="bg-white">Rangement : Placard 🟡</option>
-                </select>
-              </div>
-              <button
-                type="submit"
-                disabled={loadingAction}
-                className="h-11 px-6 btn-primary text-xxs tracking-widest font-bold flex items-center justify-center gap-1.5"
-              >
-                {loadingAction ? <Loader2 className="h-3.5 w-3.5 animate-spin text-[#ffffff]" /> : <Plus className="h-3.5 w-3.5" />} AJOUTER
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loadingAction}
+              className="h-11 px-6 btn-primary text-xxs tracking-widest font-bold flex items-center justify-center gap-1.5"
+            >
+              {loadingAction ? <Loader2 className="h-3.5 w-3.5 animate-spin text-[#ffffff]" /> : <Plus className="h-3.5 w-3.5" />} AJOUTER
+            </button>
           </form>
         </section>
 
@@ -149,21 +137,14 @@ export default function CoursesPage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {pendingItems.map((item) => {
-                const locationLabel = 
-                  item.target_location === "FRIGO_1" ? "🔵" :
-                  item.target_location === "FRIGO_2" ? "🟣" : "🟡";
-
                 return (
                   <div 
                     key={item.id}
                     onClick={() => toggleShoppingItem(item.id, true)}
                     className="bring-tile"
                   >
-                    {/* Top Row : Compartiment */}
-                    <div className="flex items-start justify-between w-full">
-                      <span className="text-[9px]" title={item.target_location}>
-                        {locationLabel}
-                      </span>
+                    {/* Top Row : Status */}
+                    <div className="flex items-start justify-end w-full">
                       <span className="text-[7px] text-[var(--accent-primary)] tracking-widest uppercase font-bold">
                         À ACHETER
                       </span>
@@ -217,21 +198,14 @@ export default function CoursesPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 opacity-50">
               {completedItems.map((item) => {
-                const locationLabel = 
-                  item.target_location === "FRIGO_1" ? "🔵" :
-                  item.target_location === "FRIGO_2" ? "🟣" : "🟡";
-
                 return (
                   <div 
                     key={item.id}
                     onClick={() => toggleShoppingItem(item.id, false)}
                     className="bring-tile bring-tile-active"
                   >
-                    {/* Top Row : Compartiment & Validated status */}
-                    <div className="flex items-start justify-between w-full">
-                      <span className="text-[9px]" title={item.target_location}>
-                        {locationLabel}
-                      </span>
+                    {/* Top Row : Validated status */}
+                    <div className="flex items-start justify-end w-full">
                       <Check className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
                     </div>
 
@@ -268,30 +242,45 @@ export default function CoursesPage() {
       </main>
 
       {/* 5. BOTTOM FLOATING NAVIGATION ISLAND (UX PREMIUM PWA) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-6 py-3 flex items-center justify-between max-w-sm w-[90%] shadow-2xl gap-6">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-4 py-3 flex items-center justify-between max-w-md w-[92%] shadow-2xl gap-1">
         <Link 
           href="/" 
-          className="flex flex-col items-center gap-1 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
+          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
-          <Layers className="h-5 w-5" />
-          <span className="text-[8px] font-extrabold tracking-widest uppercase">Mon Stock</span>
+          <Layers className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Mon Stock</span>
         </Link>
 
-        {/* Bouton central flottant Terracotta d'Ajout rapide */}
-        <Link
-          href="/?add=true"
-          className="-mt-7 bg-[var(--accent-primary)] hover:bg-[#b04a2e] text-white p-3.5 rounded-full shadow-lg border-4 border-[var(--background)] hover:scale-110 transition-all flex items-center justify-center focus:outline-none"
-          aria-label="Ajouter un aliment"
+        <Link 
+          href="/?scan=true"
+          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
-          <Plus className="h-5.5 w-5.5 text-white" strokeWidth={3} />
+          <Camera className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Scanner</span>
+        </Link>
+
+        <Link 
+          href="/?add=true"
+          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
+        >
+          <Plus className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Ajouter</span>
         </Link>
 
         <Link 
           href="/courses" 
-          className="flex flex-col items-center gap-1 text-[var(--accent-primary)] hover:scale-105 transition-all flex-1"
+          className="flex flex-col items-center gap-1.5 text-[var(--accent-primary)] hover:scale-105 transition-all flex-1"
         >
-          <ShoppingBag className="h-5 w-5" />
-          <span className="text-[8px] font-extrabold tracking-widest uppercase">Courses</span>
+          <ShoppingBag className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Courses</span>
+        </Link>
+
+        <Link 
+          href="/?recipes=true"
+          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
+        >
+          <Sparkles className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Recettes</span>
         </Link>
       </nav>
 

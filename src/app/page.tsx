@@ -39,7 +39,6 @@ export default function Home() {
   } = useApp();
 
   // Navigation locale
-  const [activeTab, setActiveTab] = useState<"ALL" | "FRIGO_1" | "FRIGO_2" | "PLACARD">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   
   // États de l'onboarding
@@ -70,13 +69,27 @@ export default function Home() {
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isProcessingScanRef = useRef(false);
 
-  // Effet d'ouverture automatique du tiroir d'ajout (redirection depuis la page courses)
+  // Effet d'ouverture automatique du tiroir d'ajout ou défilement vers les recettes (redirection depuis la page courses)
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.search.includes("add=true")) {
-      setIsAddDrawerOpen(true);
-      // Supprimer le paramètre de l'URL sans recharger la page
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
+    if (typeof window !== "undefined") {
+      const search = window.location.search;
+      if (search.includes("add=true")) {
+        setIsAddDrawerOpen(true);
+        setShowScanner(false);
+      } else if (search.includes("scan=true")) {
+        setIsAddDrawerOpen(true);
+        setShowScanner(true);
+      } else if (search.includes("recipes=true")) {
+        setTimeout(() => {
+          document.getElementById("chef-recipes")?.scrollIntoView({ behavior: "smooth" });
+        }, 500);
+      }
+      
+      if (search) {
+        // Supprimer le paramètre de l'URL sans recharger la page
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      }
     }
   }, []);
 
@@ -294,9 +307,8 @@ export default function Home() {
 
   // Filtre et recherche du stock
   const filteredStock = stock.filter((item) => {
-    const matchesTab = activeTab === "ALL" || item.location === activeTab;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
+    return matchesSearch;
   });
 
   // Produits urgents / périmés pour l'alerte haute-couture (Bring! missing feature)
@@ -473,7 +485,7 @@ export default function Home() {
 
       <main className="px-6 py-8 space-y-12 max-w-4xl mx-auto w-full animate-fade-in">
         
-        {/* 2. Barre de Recherche & Filtrage (Minimaliste) */}
+        {/* 2. Barre de Recherche (Minimaliste) */}
         <div className="flex flex-col md:flex-row gap-6">
           <div className="relative flex-1">
             <Search className="absolute left-0 top-3.5 h-4 w-4 text-[var(--accent-primary)]" />
@@ -485,32 +497,10 @@ export default function Home() {
               className="w-full h-11 pl-7 pr-4 glass-input text-xxs uppercase tracking-wider font-semibold"
             />
           </div>
-          <div className="flex overflow-x-auto gap-3 pb-1 md:pb-0 scrollbar-none">
-            {(["ALL", "FRIGO_1", "FRIGO_2", "PLACARD"] as const).map((tab) => {
-              const label = 
-                tab === "ALL" ? "TOUT" :
-                tab === "FRIGO_1" ? "FRIGO 1 🔵" :
-                tab === "FRIGO_2" ? "FRIGO 2 🟣" : "PLACARD 🟡";
-              const active = activeTab === tab;
-              return (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`h-11 px-4 text-[9px] tracking-widest font-bold transition-all duration-300 ${
-                    active 
-                      ? "border-b-2 border-[var(--accent-primary)] text-[var(--foreground)]" 
-                      : "text-[#7c756c] hover:text-[var(--foreground)]"
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
         </div>
 
         {/* 3. ALERTE DE PÉREMPTION (Bring! Missing Feature) */}
-        {urgentItems.length > 0 && searchQuery === "" && activeTab === "ALL" && (
+        {urgentItems.length > 0 && searchQuery === "" && (
           <section className="animate-fade-in border border-red-200 bg-red-50/50 p-6">
             <div className="flex items-center space-x-2.5 mb-4 border-b border-red-200 pb-3">
               <AlertTriangle className="h-4.5 w-4.5 text-red-600" />
@@ -524,7 +514,6 @@ export default function Home() {
                 <thead>
                   <tr className="border-b border-black/[0.04] text-[9px] text-[var(--accent-primary)] tracking-wider uppercase font-bold">
                     <th className="py-2.5">Produit</th>
-                    <th className="py-2.5">Localisation</th>
                     <th className="py-2.5 text-right">Statut</th>
                     <th className="py-2.5 text-right">Actions</th>
                   </tr>
@@ -538,9 +527,6 @@ export default function Home() {
                           <span className="mr-2 text-sm leading-none">{getFoodEmoji(item.name)}</span>
                           <span>{item.name}</span>
                           {item.is_opened && <span className="ml-2 text-[8px] border border-amber-600/30 text-amber-700 px-1 font-bold">OUVERT</span>}
-                        </td>
-                        <td className="py-3 text-[#7c756c] uppercase font-bold text-[9px]">
-                          {item.location === "FRIGO_1" ? "Frigo 1 🔵" : item.location === "FRIGO_2" ? "Frigo 2 🟣" : "Placard 🟡"}
                         </td>
                         <td className="py-3 text-right">
                           <span className={`${status.style} font-bold`}>{status.text}</span>
@@ -597,11 +583,8 @@ export default function Home() {
                     key={item.id} 
                     className={`bring-tile group ${isCritique ? "border-red-300 bg-red-50/20" : ""} ${item.is_opened ? "bring-tile-active" : ""}`}
                   >
-                    {/* Top Row : Compartiment & Expiration */}
-                    <div className="flex items-start justify-between w-full">
-                      <span className="text-[10px]" title={item.location}>
-                        {locationLabel}
-                      </span>
+                    {/* Top Row : Expiration */}
+                    <div className="flex items-start justify-end w-full">
                       {item.expiration_date && (
                         <span className={`text-[8px] font-bold px-1 py-0.2 uppercase border ${
                           expStatus.days <= 0 
@@ -671,7 +654,7 @@ export default function Home() {
         </section>
 
         {/* 5. RECOMMANDATION DU CHEF : CHRONIQUE GASTRONOMIQUE IA (Chef IA Anti-Gaspi) */}
-        <section className="glass-panel p-10 space-y-8 relative overflow-hidden">
+        <section id="chef-recipes" className="glass-panel p-10 space-y-8 relative overflow-hidden">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline gap-6 border-b border-[var(--card-border)] pb-5">
             <div className="space-y-2">
               <h2 className="text-xl font-bold text-[var(--foreground)] tracking-wider uppercase font-display flex items-baseline gap-2">
@@ -934,20 +917,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-1.5">
-                  <label className="text-[8px] font-extrabold text-[var(--accent-primary)] uppercase tracking-widest">Rangement</label>
-                  <select
-                    value={newItemLocation}
-                    onChange={(e) => setNewItemLocation(e.target.value as any)}
-                    className="w-full h-11 px-0 glass-input text-xs font-semibold uppercase tracking-wider"
-                  >
-                    <option value="FRIGO_1" className="bg-white">Frigo 1 🔵</option>
-                    <option value="FRIGO_2" className="bg-white">Frigo 2 🟣</option>
-                    <option value="PLACARD" className="bg-white">Placard 🟡</option>
-                  </select>
-                </div>
-
+              <div className="space-y-6">
                 <div className="space-y-1.5">
                   <label className="text-[8px] font-extrabold text-[var(--accent-primary)] uppercase tracking-widest">Quantité / État</label>
                   <select
@@ -985,31 +955,60 @@ export default function Home() {
       )}
 
       {/* 8. BOTTOM FLOATING NAVIGATION ISLAND (UX PREMIUM PWA) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-6 py-3 flex items-center justify-between max-w-sm w-[90%] shadow-2xl gap-6">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-4 py-3 flex items-center justify-between max-w-md w-[92%] shadow-2xl gap-1">
         <Link 
           href="/" 
-          className="flex flex-col items-center gap-1 text-[var(--accent-primary)] hover:scale-105 transition-all flex-1"
+          className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
+            !isAddDrawerOpen && !showScanner ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
+          }`}
         >
-          <Layers className="h-5 w-5" />
-          <span className="text-[8px] font-extrabold tracking-widest uppercase">Mon Stock</span>
+          <Layers className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Mon Stock</span>
         </Link>
 
-        {/* Bouton central flottant Terracotta d'Ajout rapide */}
-        <button
-          onClick={() => setIsAddDrawerOpen(true)}
-          className="-mt-7 bg-[var(--accent-primary)] hover:bg-[#b04a2e] text-white p-3.5 rounded-full shadow-lg border-4 border-[var(--background)] hover:scale-110 transition-all flex items-center justify-center focus:outline-none"
-          aria-label="Ajouter un aliment"
+        <button 
+          onClick={() => {
+            setIsAddDrawerOpen(true);
+            setShowScanner(true);
+          }}
+          className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
+            isAddDrawerOpen && showScanner ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
+          }`}
         >
-          <Plus className="h-5.5 w-5.5 text-white" strokeWidth={3} />
+          <Camera className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Scanner</span>
+        </button>
+
+        <button 
+          onClick={() => {
+            setIsAddDrawerOpen(true);
+            setShowScanner(false);
+          }}
+          className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
+            isAddDrawerOpen && !showScanner ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
+          }`}
+        >
+          <Plus className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Ajouter</span>
         </button>
 
         <Link 
           href="/courses" 
-          className="flex flex-col items-center gap-1 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
+          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
-          <ShoppingBag className="h-5 w-5" />
-          <span className="text-[8px] font-extrabold tracking-widest uppercase">Courses</span>
+          <ShoppingBag className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Courses</span>
         </Link>
+
+        <button 
+          onClick={() => {
+            document.getElementById("chef-recipes")?.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
+        >
+          <Sparkles className="h-4.5 w-4.5" />
+          <span className="text-[7px] font-extrabold tracking-widest uppercase">Recettes</span>
+        </button>
       </nav>
 
     </div>
