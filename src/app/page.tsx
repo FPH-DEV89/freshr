@@ -19,7 +19,8 @@ import {
   AlertTriangle,
   Loader2,
   Camera,
-  X
+  X,
+  User
 } from "lucide-react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import Link from "next/link";
@@ -35,7 +36,8 @@ export default function Home() {
     joinFoyer, 
     addStockItem, 
     updateStockItem, 
-    deleteStockItem 
+    deleteStockItem, 
+    leaveFoyer
   } = useApp();
 
   // Navigation locale
@@ -83,6 +85,8 @@ export default function Home() {
         setTimeout(() => {
           document.getElementById("chef-recipes")?.scrollIntoView({ behavior: "smooth" });
         }, 500);
+      } else if (search.includes("profile=true")) {
+        setShowShareModal(true);
       }
       
       if (search) {
@@ -737,12 +741,14 @@ export default function Home() {
 
       </main>
 
-      {/* 6. MODAL DE PARTAGE FOYER (Sharp laitonné) */}
+      {/* 6. MODAL/DRAWER DE PROFIL & RÉGLAGES FOYER (Premium Editorial) */}
       {showShareModal && foyer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
-          <div className="glass-panel w-full max-w-sm p-8 space-y-6 bg-white">
+          <div className="glass-panel w-full max-w-md p-8 space-y-6 bg-white border border-[var(--accent-border)] shadow-2xl">
             <div className="flex items-center justify-between border-b border-[var(--card-border)] pb-3">
-              <h3 className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider">PARTAGER MON FOYER</h3>
+              <h3 className="text-xs font-bold text-[var(--foreground)] uppercase tracking-wider flex items-center gap-2">
+                <User className="h-4.5 w-4.5 text-[var(--accent-primary)]" /> Profil & Foyer
+              </h3>
               <button 
                 onClick={() => setShowShareModal(false)}
                 className="p-1 text-[var(--accent-primary)] hover:text-[var(--foreground)] transition-all"
@@ -750,19 +756,72 @@ export default function Home() {
                 <X className="h-4.5 w-4.5" />
               </button>
             </div>
-            <p className="text-[#7c756c] text-xxs leading-relaxed font-sans">
-              Pour connecter votre conjoint, partagez-lui cet identifiant de foyer unique. Il devra le coller à l'ouverture de son application.
-            </p>
-            <div className="flex items-center gap-3 p-3.5 bg-black/[0.02] border border-[var(--card-border)]">
-              <span className="text-xxs font-mono text-[var(--foreground)] flex-1 truncate font-bold uppercase">{foyer.id}</span>
-              <button
-                onClick={handleCopyFoyerId}
-                className="p-1 text-[var(--foreground)] hover:text-[var(--accent-primary)] transition-all duration-200"
-              >
-                {isCopied ? <Check className="h-4 w-4 text-[var(--accent-primary)]" /> : <Copy className="h-4 w-4" />}
-              </button>
+
+            {/* Informations utilisateur / compte */}
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[8px] font-extrabold text-[var(--accent-primary)] uppercase tracking-widest block">Votre compte (Anonyme)</label>
+                <p className="text-xxs font-mono text-[var(--foreground)] truncate font-semibold bg-black/[0.01] p-2 border border-black/[0.03]">
+                  {user?.email || "invite-freshr@gemini.app"}
+                </p>
+              </div>
+
+              {/* Foyer */}
+              <div className="space-y-2">
+                <label className="text-[8px] font-extrabold text-[var(--accent-primary)] uppercase tracking-widest block">Mon Foyer Actif</label>
+                <div className="flex items-center justify-between p-3.5 bg-black/[0.02] border border-[var(--card-border)]">
+                  <div className="flex flex-col truncate pr-4">
+                    <span className="text-xxs font-bold text-[var(--foreground)] uppercase tracking-wide">{foyer.name}</span>
+                    <span className="text-[8px] font-mono text-[#7c756c] truncate mt-0.5">{foyer.id}</span>
+                  </div>
+                  <button
+                    onClick={handleCopyFoyerId}
+                    className="p-2 btn-secondary hover:text-[var(--accent-primary)] transition-all flex items-center justify-center shrink-0"
+                    title="Copier l'identifiant"
+                  >
+                    {isCopied ? <Check className="h-4 w-4 text-[var(--accent-primary)]" /> : <Copy className="h-4 w-4" />}
+                  </button>
+                </div>
+                {isCopied && <p className="text-[8px] text-[var(--accent-primary)] text-center font-bold tracking-widest uppercase mt-1">Copié dans le presse-papier !</p>}
+              </div>
+
+              {/* Préférences & Notifications */}
+              <div className="space-y-3 pt-2">
+                <label className="text-[8px] font-extrabold text-[var(--accent-primary)] uppercase tracking-widest block">Préférences de notifications</label>
+                
+                <div className="space-y-2 bg-black/[0.01] p-3 border border-black/[0.03]">
+                  <label className="flex items-center justify-between text-xxs font-semibold uppercase tracking-wider text-[var(--foreground)] cursor-pointer">
+                    <span>Alertes péremption (3j)</span>
+                    <input type="checkbox" defaultChecked className="accent-[var(--accent-primary)] h-3.5 w-3.5" />
+                  </label>
+                  <label className="flex items-center justify-between text-xxs font-semibold uppercase tracking-wider text-[var(--foreground)] cursor-pointer pt-1">
+                    <span>Rapports anti-gaspi du Chef</span>
+                    <input type="checkbox" defaultChecked className="accent-[var(--accent-primary)] h-3.5 w-3.5" />
+                  </label>
+                  <label className="flex items-center justify-between text-xxs font-semibold uppercase tracking-wider text-[var(--foreground)] cursor-pointer pt-1">
+                    <span>Liste de courses synchro</span>
+                    <input type="checkbox" defaultChecked className="accent-[var(--accent-primary)] h-3.5 w-3.5" />
+                  </label>
+                </div>
+              </div>
+
+              {/* Actions de déconnexion / quitter */}
+              <div className="pt-4 border-t border-[var(--card-border)]">
+                <button
+                  onClick={() => {
+                    const conf = confirm("Voulez-vous vraiment quitter ce Foyer ? Vous perdrez l'accès à ce stock partagé.");
+                    if (conf) {
+                      leaveFoyer();
+                      setShowShareModal(false);
+                    }
+                  }}
+                  className="w-full h-10 border border-red-200 text-red-600 bg-red-50/20 hover:bg-red-50 text-[9px] tracking-widest font-extrabold uppercase transition-all flex items-center justify-center"
+                >
+                  QUITTER LE FOYER
+                </button>
+              </div>
+
             </div>
-            {isCopied && <p className="text-[8px] text-[var(--accent-primary)] text-center font-bold tracking-widest uppercase">Copié dans le presse-papier !</p>}
           </div>
         </div>
       )}
@@ -955,11 +1014,11 @@ export default function Home() {
       )}
 
       {/* 8. BOTTOM FLOATING NAVIGATION ISLAND (UX PREMIUM PWA) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-6 py-3 flex items-center justify-between max-w-sm w-[90%] shadow-2xl gap-2">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-4 py-3 flex items-center justify-between max-w-md w-[92%] shadow-2xl gap-1">
         <Link 
           href="/" 
           className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
-            !isAddDrawerOpen ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
+            !isAddDrawerOpen && !showShareModal ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
           }`}
         >
           <Layers className="h-4.5 w-4.5" />
@@ -995,6 +1054,18 @@ export default function Home() {
         >
           <Sparkles className="h-4.5 w-4.5" />
           <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Recettes</span>
+        </button>
+
+        <button 
+          onClick={() => {
+            setShowShareModal(true);
+          }}
+          className={`flex flex-col items-center gap-1.5 flex-1 transition-all hover:scale-105 ${
+            showShareModal ? "text-[var(--accent-primary)]" : "text-[#7c756c] hover:text-[var(--foreground)]"
+          }`}
+        >
+          <User className="h-4.5 w-4.5" />
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Profil</span>
         </button>
       </nav>
 

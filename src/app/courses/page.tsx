@@ -14,7 +14,8 @@ import {
   ShoppingCart,
   AlertCircle,
   Camera,
-  Sparkles
+  Sparkles,
+  User
 } from "lucide-react";
 import Link from "next/link";
 
@@ -242,7 +243,7 @@ export default function CoursesPage() {
       </main>
 
       {/* 5. BOTTOM FLOATING NAVIGATION ISLAND (UX PREMIUM PWA) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-6 py-3 flex items-center justify-between max-w-sm w-[90%] shadow-2xl gap-2">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-4 py-3 flex items-center justify-between max-w-md w-[92%] shadow-2xl gap-1">
         <Link 
           href="/" 
           className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
@@ -273,6 +274,14 @@ export default function CoursesPage() {
         >
           <Sparkles className="h-4.5 w-4.5" />
           <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Recettes</span>
+        </Link>
+
+        <Link 
+          href="/?profile=true"
+          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
+        >
+          <User className="h-4.5 w-4.5" />
+          <span className="text-[7.5px] font-extrabold tracking-widest uppercase">Profil</span>
         </Link>
       </nav>
 
