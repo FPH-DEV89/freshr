@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #fbfaf7;
+  --foreground: #1c1a17;
+  
+  /* Typographies Élite */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  /* Palette Haute-Couture : Terracotta & Crème */
+  --accent-primary: #c85a3c;      /* Terracotta chaleureux */
+  --accent-secondary: #8d9a8a;    /* Sauge doux */
+  --accent-dark: #f5f2eb;         /* Crème lin chaud */
+  --accent-glow: rgba(200, 90, 60, 0.04);
+  
+  /* Tonal Stack (Rectiligne, sans bordures agressives) */
+  --surface-base: #fbfaf7;
+  --surface-panel: #f5f2eb;
+  --surface-card: #ffffff;
+  --surface-input: #ffffff;
+  
+  --card-border: rgba(200, 90, 60, 0.15);
+  --accent-border: rgba(200, 90, 60, 0.35);
+  --glass-blur: blur(0px); /* Pureté de la matière sans flou artificiel */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent-primary);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+  /* Grain subtil et dégradé lin très étiré */
+  background-image: 
+    radial-gradient(circle at 5% 5%, rgba(200, 90, 60, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 95% 95%, rgba(141, 154, 138, 0.02) 0%, transparent 45%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, .font-editorial {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+/* 🏛️ DESIGN SYSTEM : ÉDITORIAL HAUTE-COUTURE (Angles Droits & Hairlines) */
+
+.glass-panel {
+  background: var(--surface-panel);
+  border: 1px solid var(--card-border);
+  border-radius: 0px !important; /* Aucun arrondi */
+  box-shadow: 0 12px 36px rgba(28, 26, 23, 0.06);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: var(--accent-border);
+  box-shadow: 
+    0 16px 48px rgba(28, 26, 23, 0.1),
+    0 0 20px rgba(200, 90, 60, 0.02);
+}
+
+/* 📱 BRING! STYLE : TUILES DE PRODUITS (Visual Grid Tiles) */
+.bring-tile {
+  background: var(--surface-card);
+  border: 1px solid var(--card-border);
+  border-radius: 0px !important;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.bring-tile:hover {
+  background: #fbfaf7;
+  border-color: var(--accent-border);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(200, 90, 60, 0.05);
+}
+
+.bring-tile:active {
+  transform: translateY(1px);
+  animation: flickerActive 0.15s ease-out;
+}
+
+/* Tuile sélectionnée / Dans la liste de courses */
+.bring-tile-active {
+  background: #fdf5f2;
+  border-color: var(--accent-primary);
+  box-shadow: inset 0 0 12px rgba(200, 90, 60, 0.05);
+}
+
+/* Métriques d'aliments */
+.food-card {
+  background: var(--surface-card);
+  border-radius: 0px !important;
+  border: 1px solid var(--card-border);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.food-card:hover {
+  background: #fbfaf7;
+  border-color: var(--accent-border);
+}
+
+/* Saisie Minimaliste Éditoriale (Chambre Laiton) */
+.glass-input {
+  background: var(--surface-input);
+  border: none;
+  border-bottom: 1px solid rgba(200, 90, 60, 0.3);
+  color: var(--foreground);
+  border-radius: 0px !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-input:focus {
+  background: #ffffff;
+  border-bottom-color: var(--accent-primary);
+  outline: none;
+  box-shadow: none;
+}
+
+/* Boutons Haute-Couture */
+.btn-primary {
+  background: var(--accent-primary);
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 0px !important;
+  border: 1px solid var(--accent-primary);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.btn-primary:active {
+  opacity: 0.8;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--foreground);
+  color: var(--foreground);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 0px !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(200, 90, 60, 0.05);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* Badges Rectangulaires Laiton */
+.badge-frigo-1 {
+  background: transparent;
+  color: #8cc3fa;
+  border: 1px solid rgba(140, 195, 250, 0.3);
+  border-radius: 0px !important;
+}
+
+.badge-frigo-2 {
+  background: transparent;
+  color: #cf9eff;
+  border: 1px solid rgba(207, 158, 255, 0.3);
+  border-radius: 0px !important;
+}
+
+.badge-placard {
+  background: transparent;
+  color: #fad36b;
+  border: 1px solid rgba(250, 211, 107, 0.3);
+  border-radius: 0px !important;
+}
+
+.badge-plein {
+  background: transparent;
+  color: var(--accent-primary);
+  border: 1px solid var(--card-border);
+  border-radius: 0px !important;
+}
+
+.badge-moyen {
+  background: transparent;
+  color: #d0b179;
+  border: 1px solid rgba(208, 177, 121, 0.3);
+  border-radius: 0px !important;
+}
+
+.badge-presque-vide {
+  background: transparent;
+  color: #f7a399;
+  border: 1px solid rgba(247, 163, 153, 0.3);
+  border-radius: 0px !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 90, 60, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* Animations Cinématiques */
+@keyframes cinematicFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flickerActive {
+  0% { opacity: 1; }
+  50% { opacity: 0.75; }
+  100% { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: cinematicFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Bottom Navigation Island Éditoriale */
+.nav-dock {
+  background: #ffffff;
+  border: 1px solid var(--card-border);
+  border-radius: 0px !important;
+  box-shadow: 0 16px 40px rgba(28, 26, 23, 0.08);
+}
+
+/* 🔦 Scanner Laser Overlay Animation */
+@keyframes laserScan {
+  0%, 100% {
+    transform: translateY(-55px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(55px);
+    opacity: 1;
+  }
+}
+
+.animate-laser-scan {
+  animation: laserScan 2.5s ease-in-out infinite;
+}
+
