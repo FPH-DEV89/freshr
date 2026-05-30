@@ -70,6 +70,16 @@ export default function Home() {
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isProcessingScanRef = useRef(false);
 
+  // Effet d'ouverture automatique du tiroir d'ajout (redirection depuis la page courses)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search.includes("add=true")) {
+      setIsAddDrawerOpen(true);
+      // Supprimer le paramètre de l'URL sans recharger la page
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, []);
+
   // Effet de copie d'ID Foyer
   const handleCopyFoyerId = () => {
     if (foyer) {
@@ -975,19 +985,29 @@ export default function Home() {
       )}
 
       {/* 8. BOTTOM FLOATING NAVIGATION ISLAND (UX PREMIUM PWA) */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-10 py-4 flex justify-around max-w-sm w-[90%] shadow-2xl">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 nav-dock rounded-none px-6 py-3 flex items-center justify-between max-w-sm w-[90%] shadow-2xl gap-6">
         <Link 
           href="/" 
-          className="flex flex-col items-center gap-1.5 text-[var(--accent-primary)] hover:scale-105 transition-all"
+          className="flex flex-col items-center gap-1 text-[var(--accent-primary)] hover:scale-105 transition-all flex-1"
         >
-          <Layers className="h-4.5 w-4.5" />
+          <Layers className="h-5 w-5" />
           <span className="text-[8px] font-extrabold tracking-widest uppercase">Mon Stock</span>
         </Link>
+
+        {/* Bouton central flottant Terracotta d'Ajout rapide */}
+        <button
+          onClick={() => setIsAddDrawerOpen(true)}
+          className="-mt-7 bg-[var(--accent-primary)] hover:bg-[#b04a2e] text-white p-3.5 rounded-full shadow-lg border-4 border-[var(--background)] hover:scale-110 transition-all flex items-center justify-center focus:outline-none"
+          aria-label="Ajouter un aliment"
+        >
+          <Plus className="h-5.5 w-5.5 text-white" strokeWidth={3} />
+        </button>
+
         <Link 
           href="/courses" 
-          className="flex flex-col items-center gap-1.5 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all"
+          className="flex flex-col items-center gap-1 text-[#7c756c] hover:text-[var(--foreground)] hover:scale-105 transition-all flex-1"
         >
-          <ShoppingBag className="h-4.5 w-4.5" />
+          <ShoppingBag className="h-5 w-5" />
           <span className="text-[8px] font-extrabold tracking-widest uppercase">Courses</span>
         </Link>
       </nav>
